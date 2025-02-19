@@ -6,7 +6,10 @@ export interface VinylInformation {
     tracklist: { title: string; duration: string }[];
     genre?: string[];
     style?: string[];
+    discogsMasterUrl?: string;
+    discogsUri?: string;
   }
+
 
 
   export interface SpotifyTokenResponse {

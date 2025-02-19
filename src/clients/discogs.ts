@@ -12,28 +12,22 @@ export async function getDiscogsInformation(barcode: string, artist: string, rel
       redirect: "follow"
     };
 
-  const barcode_hyphens = barcode?.replace(/ /g, '-') || '';
-  const artist_hyphens = artist?.replace(/ /g, '-') || '';
-  const release_title_hyphens = release_title?.replace(/ /g, '-') || '';
-
   let url = 'https://api.discogs.com/database/search?';
   const params = new URLSearchParams();
 
-    if (barcode_hyphens) {
-      params.append('barcode', barcode);
-    }
-    if (release_title_hyphens) {
-      params.append('release_title', release_title);
-    }
-    if (artist_hyphens) {
-      params.append('artist', artist);
-    }
+  // Only add parameters if they are non-empty strings
+  if (barcode) {
+    params.append('barcode', barcode);
+  } else if (artist && release_title) {
+    params.append('artist', artist);
+    params.append('release_title', release_title);
+  }
 
-    params.append('format', 'vinyl');
-    params.append('per_page', '5');
-    params.append('page', '1');
-    params.append('key', discogs_key);
-    params.append('secret', discogs_secret);
+  params.append('format', 'vinyl');
+  params.append('per_page', '5');
+  params.append('page', '1');
+  params.append('key', discogs_key);
+  params.append('secret', discogs_secret);
 
     url += params.toString();
     console.log('URL:', url);
@@ -47,7 +41,19 @@ export async function getDiscogsInformation(barcode: string, artist: string, rel
       }
 
       const parsedResult = JSON.parse(result);
-      const firstEntryMasterURL = parsedResult.results[0].master_url;
+      
+      // Check if we have results
+      if (!parsedResult.results || parsedResult.results.length === 0) {
+        return { error: "No results found in Discogs" };
+      }
+
+      // Check if we have a master_url
+      const firstEntry = parsedResult.results[0];
+      if (!firstEntry.master_url) {
+        return { error: "No master URL found for this release" };
+      }
+
+      const firstEntryMasterURL = firstEntry.master_url;
       const vinylInformationRequest = await fetch(firstEntryMasterURL, requestOptions);
       console.log(`Status Code: ${vinylInformationRequest.status}`);
       const vinylInformationResult = await vinylInformationRequest.text();

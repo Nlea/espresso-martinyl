@@ -11,10 +11,17 @@
     "fiberplane": "npx @fiberplane/studio@latest"
   },
   "dependencies": {
+    "@fiberplane/embedded": "^0.0.30",
+    "@fiberplane/hono": "^0.4.2",
+    "@hono/zod-openapi": "^0.18.4",
+    "@hono/zod-validator": "^0.4.2",
     "@neondatabase/serverless": "^0.10.1",
+    "@types/cheerio": "^0.22.35",
+    "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.36.4",
-    "hono": "^4.6.7"
+    "hono": "^4.6.16",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241205.0",
