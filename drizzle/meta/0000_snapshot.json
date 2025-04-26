@@ -1,5 +1,5 @@
 {
-  "id": "402ad8a5-76ea-438b-a076-f9da10876b10",
+  "id": "e1c1affb-032c-4cd7-b806-6ca836a5aac6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -46,7 +46,7 @@
         },
         "extra_artists": {
           "name": "extra_artists",
-          "type": "text",
+          "type": "text[]",
           "primaryKey": false,
           "notNull": false
         }
@@ -135,10 +135,32 @@
           "name": "discogs_uri",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "vinyl_owner_idx": {
+          "name": "vinyl_owner_idx",
+          "columns": [
+            {
+              "expression": "discogs_uri",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "owner",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

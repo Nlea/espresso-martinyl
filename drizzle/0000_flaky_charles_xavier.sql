@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "tracks" (
 	"title" text NOT NULL,
 	"artists" text[],
 	"duration" text,
-	"extra_artists" text
+	"extra_artists" text[]
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "vinyls" (
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS "vinyls" (
 	"genre" text[],
 	"style" text[],
 	"discogs_master_url" text,
-	"discogs_uri" text
+	"discogs_uri" text NOT NULL
 );
 --> statement-breakpoint
 DO $$ BEGIN
@@ -26,3 +26,5 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
+--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "vinyl_owner_idx" ON "vinyls" USING btree ("discogs_uri","owner");

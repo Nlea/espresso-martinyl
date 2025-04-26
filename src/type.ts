@@ -6,6 +6,11 @@ export interface Track {
     extraartists?: string[];
 }
 
+export interface VinylIdentifier {
+    discogsUri: string;
+    owner: string;
+}
+
 export interface VinylInformation {
     title: string;
     artists: string[];
@@ -15,6 +20,7 @@ export interface VinylInformation {
     genre?: string[];
     style?: string[];
     discogsMasterUrl?: string;
-    discogsUri?: string;
-    owner?: string;
+    discogsUri: string; // Made required since it's part of the unique identifier
+    owner: string; // Made required since it's part of the unique identifier
+    uniqueId?: string; // Can be generated as `${discogsUri}-${owner}`
 }

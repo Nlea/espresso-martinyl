@@ -70,6 +70,12 @@ app.post("/api/vinyl",  async (c) => {
         details: (error as { errors: unknown }).errors 
       }, 400);
     }
+    if (error instanceof Error && error.name === 'VinylError' && 'code' in error && error.code === 'DUPLICATE_ENTRY') {
+      return c.json({ 
+        error: error.message,
+        code: 'DUPLICATE_ENTRY'
+      }, 409);
+    }
     return c.json({ error: 'Internal server error' }, 500);
   }
 });

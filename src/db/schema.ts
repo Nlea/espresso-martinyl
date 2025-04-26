@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer} from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer, uniqueIndex } from "drizzle-orm/pg-core";
 
 
 export const vinyls = pgTable("vinyls", {
@@ -11,7 +11,11 @@ export const vinyls = pgTable("vinyls", {
   genre: text("genre").array(),
   style: text("style").array(),
   discogsMasterUrl: text("discogs_master_url"),
-  discogsUri: text("discogs_uri"),
+  discogsUri: text("discogs_uri").notNull(), // Made required since it's part of unique constraint
+}, (table) => {
+  return {
+    vinylOwnerIdx: uniqueIndex("vinyl_owner_idx").on(table.discogsUri, table.owner),
+  };
 });
 
 export const tracks = pgTable("tracks", {
