@@ -1,19 +1,20 @@
+export interface Track {
+    position: string;
+    title: string;
+    artists: string[];
+    duration: string;
+    extraartists?: string[];
+}
+
 export interface VinylInformation {
     title: string;
     artists: string[];
     label: string;
     year: number;
-    tracklist: { title: string; duration: string }[];
+    tracklist: Track[];
     genre?: string[];
     style?: string[];
     discogsMasterUrl?: string;
     discogsUri?: string;
-  }
-
-
-
-  export interface SpotifyTokenResponse {
-    access_token: string;
-    token_type: string;
-    expires_in: number;
-  }
+    owner?: string;
+}

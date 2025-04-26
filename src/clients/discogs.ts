@@ -1,4 +1,4 @@
-import type { VinylInformation } from "../type";
+import type { VinylInformation, Track } from "../type";
 
 export async function getDiscogsInformation(barcode: string, artist: string, release_title: string, discogs_key: string, discogs_secret: string ) {
 
@@ -49,28 +49,39 @@ export async function getDiscogsInformation(barcode: string, artist: string, rel
 
       // Check if we have a master_url
       const firstEntry = parsedResult.results[0];
+      const label = Array.isArray(firstEntry.label) ? firstEntry.label[0] || '' : '';
+
       if (!firstEntry.master_url) {
         return { error: "No master URL found for this release" };
       }
 
       const firstEntryMasterURL = firstEntry.master_url;
       const vinylInformationRequest = await fetch(firstEntryMasterURL, requestOptions);
-      console.log(`Status Code: ${vinylInformationRequest.status}`);
       const vinylInformationResult = await vinylInformationRequest.text();
       const vinylInformationJson = JSON.parse(vinylInformationResult);
-      console.log(vinylInformationJson);
-      const {title, artists, label, year, tracklist, genres, styles} = vinylInformationJson;
+      const {title, artists, year, tracklist, genres, styles} = vinylInformationJson;
+
+      // Format the tracklist to include artist names as text
+      const formattedTracklist = tracklist.map((track: any) => ({
+        ...track,
+        artists: track.artists ? track.artists.map((artist: { name: string }) => artist.name).join(', ') : '',
+        extraartists: track.extraartists ? track.extraartists.map((artist: { name: string }) => artist.name).join(', ') : ''
+      }));
+
+      console.log('Formatted tracklist:', formattedTracklist);
 
       const artistNames = artists.map((artist: { name: string }) => artist.name);
 
       const vinylInformation: VinylInformation = {
-        title: title,
+        title,
         artists: artistNames,
-        label: label,
-        year: year,
-        tracklist: tracklist,
+        label,
+        year,
         genre: genres,
-        style: styles
+        tracklist: formattedTracklist,
+        style: styles,
+        discogsMasterUrl: firstEntry.master_url,
+        discogsUri: firstEntry.uri
       };
 
       return vinylInformation;

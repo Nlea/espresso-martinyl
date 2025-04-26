@@ -1,1 +1,0 @@
-ALTER TABLE "vinyls" ADD COLUMN "tracklist[]" text;

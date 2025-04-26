@@ -1,11 +1,11 @@
 {
-  "id": "790269c7-57a7-4c55-9a4b-5fb6523ef427",
+  "id": "402ad8a5-76ea-438b-a076-f9da10876b10",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.songs": {
-      "name": "songs",
+    "public.tracks": {
+      "name": "tracks",
       "schema": "",
       "columns": {
         "id": {
@@ -14,59 +14,59 @@
           "primaryKey": true,
           "notNull": true
         },
+        "vinyl_id": {
+          "name": "vinyl_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "position": {
+          "name": "position",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "title": {
           "name": "title",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "artist": {
-          "name": "artist",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "album": {
-          "name": "album",
-          "type": "text",
+        "artists": {
+          "name": "artists",
+          "type": "text[]",
           "primaryKey": false,
           "notNull": false
         },
-        "mood": {
-          "name": "mood",
+        "duration": {
+          "name": "duration",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "bpm": {
-          "name": "bpm",
-          "type": "integer",
+        "extra_artists": {
+          "name": "extra_artists",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "additional_info": {
-          "name": "additional_info",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "tracks_vinyl_id_vinyls_id_fk": {
+          "name": "tracks_vinyl_id_vinyls_id_fk",
+          "tableFrom": "tracks",
+          "tableTo": "vinyls",
+          "columnsFrom": [
+            "vinyl_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -89,9 +89,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "artist": {
-          "name": "artist",
-          "type": "text",
+        "artists": {
+          "name": "artists",
+          "type": "text[]",
           "primaryKey": false,
           "notNull": false
         },
@@ -113,15 +113,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "genre[]": {
-          "name": "genre[]",
-          "type": "text",
+        "genre": {
+          "name": "genre",
+          "type": "text[]",
           "primaryKey": false,
           "notNull": false
         },
-        "style[]": {
-          "name": "style[]",
-          "type": "text",
+        "style": {
+          "name": "style",
+          "type": "text[]",
           "primaryKey": false,
           "notNull": false
         },
