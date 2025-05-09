@@ -1,23 +1,17 @@
 
 import { Hono } from "hono";
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { getDiscogsInformation } from "./clients/discogs";
-import { getSpotifySongInformation, getSpotifyToken, getSpotifySongAudioFeatures } from "./clients/spotify";
-
-import { insertVinyl } from "./services/db/vinylService"; 
+import { insertVinyl, getVinyl, getBasicVinyls, getVinylMetadata, getVinylTracks } from "./services/db/vinylService"; 
 import { insertTracks } from "./services/db/trackService";
 import { vinylInputSchema } from "./schemas/vinyl";
-
 import { createFiberplane,  createOpenAPISpec} from "@fiberplane/hono";
 
-//import apiSpec from './openapi.json';
 
 
 // Define the type for environment bindings
 interface Bindings {
   DATABASE_URL: string;
-  SPOTIFY_CLIENT_ID: string;
-  SPOTIFY_CLIENT_SECRET: string;
+  GETSONGBPM_KEY: string;
   DISCOGS_KEY: string;
   DISCOGS_SECRET: string;
 }
@@ -28,6 +22,38 @@ const app = new Hono<{ Bindings: Bindings }>();
  app.get("/", (c) => {
    return c.text("Honc! 🪿");
  });
+
+ // Get basic vinyl information
+app.get("/api/vinyls", async (c) => {
+  const vinyls = await getBasicVinyls(c.env.DATABASE_URL);
+  return c.json(vinyls);
+});
+
+// Get detailed vinyl information including artists, genres, and styles
+app.get("/api/vinyls/:id/metadata", async (c) => {
+  const id = Number(c.req.param("id"));
+  if (isNaN(id)) {
+    return c.json({ error: "Invalid vinyl ID" }, 400);
+  }
+
+  const vinyl = await getVinylMetadata(id, c.env.DATABASE_URL);
+  if (!vinyl) {
+    return c.json({ error: "Vinyl not found" }, 404);
+  }
+
+  return c.json(vinyl);
+});
+
+// Get tracks for a specific vinyl
+app.get("/api/vinyls/:id/tracks", async (c) => {
+  const id = Number(c.req.param("id"));
+  if (isNaN(id)) {
+    return c.json({ error: "Invalid vinyl ID" }, 400);
+  }
+
+  const tracks = await getVinylTracks(id, c.env.DATABASE_URL);
+  return c.json(tracks);
+});
 
 
 app.post("/api/vinyl",  async (c) => {
